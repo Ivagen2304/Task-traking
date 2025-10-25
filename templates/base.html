@@ -3,150 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Система управління завданнями</title>
+    <title>Task-traking</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        min-height: 100vh;
-    }
+            margin: 0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: #ffffff;
+        }
 
-    /* Ліва панель */
-    .sidebar {
-        width: 220px;
-        background-color: #00173a;
-        color: white;
-        padding-top: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-shrink: 0;
-    }
+        /* === ЯКОРЬ (тонка смужка зліва) === */
+        .popup-anchor {
+            position: fixed;
+            top: 40%;
+            left: 0;
+            width: 15px;
+            height: 80px;
+            background-color: #000000;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            z-index: 999;
+            transition: background 0.3s;
+        }
 
-    .sidebar h2 {
-        margin-bottom: 20px;
-        font-size: 20px;
-    }
+        /* === ВИСУВНА ПАНЕЛЬ === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -240px;           /* прихована за замовчуванням */
+            width: 220px;
+            height: 100vh;          /* на всю висоту екрана */
+            background-color: #000000;
+            color: white;
+            padding-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.4);
+            transition: left 0.4s ease;
+            z-index: 1000;
+        }
 
-    .sidebar a {
-        text-decoration: none;
-        color: white;
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 12px;
-        border: 1px solid rgb(255, 255, 255);
-        transition: background-color 0.3s;
-    }
+        .sidebar.show {
+            left: 0; /* виїжджає */
+        }
 
-    .sidebar a:hover {
-        background-color: #3a53c2;
-    }
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
 
-    .sidebar form {
-        width: 100%;
-        text-align: center;
-        margin-top: auto;
-        padding: 12px 0;
-        border-top: 1px solid rgb(255, 255, 255);
-    }
+        .sidebar a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            width: 80%;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid rgb(255, 255, 255);
+            transition: background-color 0.3s;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            background-color: #251c77;
+        }
+
+        .sidebar form {
+            width: 100%;
+            text-align: center;
+            margin-top: auto;
+            padding: 12px 0;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 35%;
+            box-sizing: border-box;
+            margin: 10px;
+        }
+
+        a {
+            text-align: center;
+        }
+
+        .card span {
+            width: 20%;
+            margin: 3px;
+            margin-left: 130px;
+        }
+
+        .ex_button {
+            width: 80%;
+            background-color: #000000;
+            border-color: white ;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .ex_button:hover {
+            background-color: #1c155e;
+        }
+
+        .button {
+            border: none;
+            background-color: #1c155e;
+            color: white;
+            padding: 8px;
+            margin-left: 75px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2d2292;
+        }
+
+        .buton {
+            border: none;
+            background-color: #1c155e;
+            color: white;
+            padding: 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .buton:hover {
+            background-color: #2d2292;
+        }
+
+        .buon {
+            border: none;
+            background-color: #1c155e;
+            color: white;
+            margin-left: 740px;
+            padding: 10px;
+            margin-top: -40px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .buon:hover {
+            background-color: #2d2292;
+        }
 
 
-    
+        
 
-    .login-container {
-        display: flex;
-        margin-left: 650px;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-    }
+        .login-container {
+            display: flex;
+            margin-left: 20px;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
 
-    .login-box {
-        background-color: #f9f9f9;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        width: 320px;
-        text-align: center;
-    }
+        .login-box {
+            background-color: #f9f9f9;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            width: 320px;
+            text-align: center;
+        }
 
-    .login-box h2 {
-        margin-bottom: 20px;
-        color: #333;
-    }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    .login-box form {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
+        .login-box form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-    .login-box button {
-        background-color: #2c3e50;
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        .login-box button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    .login-box button:hover {
-        background-color: #3a53c2;
-    }
-
-
+        .login-box button:hover {
+            background-color: #3a53c2;
+        }
 
 
-    .register-container {
-        display: flex;
-        margin-left: 630px;
-        margin-top: 90px;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
-    }
 
-    .register-box {
-        background-color: #f9f9f9;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        width: 340px;
-        text-align: center;
-    }
 
-    .register-box h2 {
-        margin-bottom: 20px;
-        color: #333;
-    }
+        .register-container {
+            display: flex;
+            margin-left: 30px;
+            margin-top: 90px;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
 
-    .register-box form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+        .register-box {
+            background-color: #f9f9f9;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            width: 340px;
+            text-align: center;
+        }
 
-    .register-box button {
-        background-color: #2c3e50;
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        .register-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    .register-box button:hover {
-        background-color: #34495e;
-    }
+        .register-box form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .register-box button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .register-box button:hover {
+            background-color: #34495e;
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <!-- Якір (тонка смужка, на яку наводиш мишку, щоб показати меню) -->
+    <div class="popup-anchor"></div>
+
+    <!-- Висувна панель -->
+    <div class="sidebar" id="sidebar">
+        <h2>Меню</h2>
+
         <a href="{% url 'tasks:task-list' %}">Головна</a>
 
         {% if not user.is_authenticated %}
@@ -155,12 +272,25 @@
         {% else %}
             <form action="{% url 'tasks:logout' %}" method="post">
                 {% csrf_token %}
-                <button type="submit">Вихід</button>
+                <button type="submit" class="ex_button">Вихід</button>
             </form>
         {% endif %}
-        </div>
-
+    </div>
     {% block content %}
     {% endblock %}
+
+    <!-- JS для показу/приховування -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const anchor = document.querySelector('.popup-anchor');
+
+        anchor.addEventListener('mouseenter', () => {
+            sidebar.classList.add('show');
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            sidebar.classList.remove('show');
+        });
+    </script>
 </body>
 </html>
